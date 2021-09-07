@@ -15,7 +15,7 @@ class Comment extends Eloquent implements UserInterface, RemindableInterface
 
   public $timestamps = true;
 
-  protected $fillable = ['comments', 'user_id'];
+  protected $fillable = ['comments', 'user_id','parent_id'];
 
   public function post(){
     return $this->belongsTo(Post::class);
@@ -24,4 +24,14 @@ class Comment extends Eloquent implements UserInterface, RemindableInterface
   {
     return $this->belongsTo(User::class);
   }
+  
+  public function parent(){
+    return $this->belongsTo(Comment::class,'parent_id','id');
+  }
+  public function reply()
+  {
+    return $this->hasMany(Comment::class, 'parent_id', 'id');
+  }
+  
+
 }

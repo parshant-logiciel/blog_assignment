@@ -34,6 +34,7 @@ Route::get('/comments', 'CommentController@index');
 Route::post('/comment/store', 'CommentController@store');
 Route::delete('/comment/delete/{id}', 'CommentController@destroy');
 Route::put('/comment/update/{id}', 'CommentController@update');
+Route::post('/comment/reply','CommentController@reply');
 
 
 

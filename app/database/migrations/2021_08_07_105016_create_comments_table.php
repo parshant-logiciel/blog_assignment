@@ -17,6 +17,7 @@ class CreateCommentsTable extends Migration {
 			$table->increments('id');
 			$table->unsignedBigInteger('user_id')->length(11);
 			$table->unsignedBigInteger('post_id')->length(11);
+			$table->unsignedBigInteger('parent_id')->length(11)->nullable();
 			$table->string('comment',200);
 			$table->timestamps();
 		});

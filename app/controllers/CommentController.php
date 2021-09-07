@@ -1,7 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Response;
-
 use App\Transformers\CommentTransformer;
 use Sorskod\Larasponse\Larasponse;
 class CommentController extends \BaseController {
@@ -28,17 +27,7 @@ class CommentController extends \BaseController {
 		return Response::json($this->response->paginatedCollection($data, new CommentTransformer));
 	}
 
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
+	
 
 	/**
 	 * Store a newly created resource in storage.
@@ -47,26 +36,38 @@ class CommentController extends \BaseController {
 	 */
 	public function store()
 	{
-		if (Post::where('id', Input::get('post_id'))->exists()) {
-			$comment = Input::all();
-			$validator = Validator::make($comment, ['post_id' => 'integer', 'comment' => 'min:3|max:200']);
+		try{
+			$post = Post::findOrFail(Input::get('post_id'));
+			$input = Input::all();
+			$validator = Validator::make($input, ['post_id' => 'integer', 'comment' => 'min:3|max:200']);
 			if ($validator->fails()) {
 				return Response::json($this->response->item($validator->errors()), 412);
 			}
-			$comment = new Comment();
+			$comment = new Comment;
 			$comment->comment = Input::get('comment');
 			$comment->user_id = Auth::id();
-			$blog = Post::find(Input::get('post_id'));
-			$blog->comments()->save($comment);
+			$comment->post_id = Input::get('post_id');
+			if(Input::get('parent_id')) {
 
+				$current = Comment::where('id', '=', Input::get('parent_id'))->first();
+
+				if($current && ($first = $current->parent) && ($first->parent) ) {
+					return Response::json(['message' => 'Restriction Reached'], 412);
+				}
+
+				$comment->parent_id = Input::get('parent_id');
+			}
+
+			$comment->save();
 			$transformed = $this->response->item($comment, new CommentTransformer);
 			$message = [
 				"Message" => 'Commented Succesfully',
 				"data" => $transformed
 			];
 			return Response::json($message, 200);
+		} catch(Exception $e){
+			return Response::json(['message' => 'Post Not Found'], 404);
 		}
-		return Response::json(['message' => 'Please Enter a Valid Id'], 404);
 	}
 
 

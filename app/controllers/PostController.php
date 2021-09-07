@@ -83,10 +83,7 @@ class PostController extends \BaseController{
 		if(Auth::check()){
 		$posts = Post::find($id);
 		if($posts){
-		if(Auth::id() == $posts->user_id){
 			return Response::json($this->response->item($posts, new PostTransformer), 200);
-		}
-				return Response::json(['message' => 'unAuthorized user'], 403);
 		}
 			return Response::json(['message' => 'Please Enter a Valid Id'], 404);
 	}
@@ -129,11 +126,14 @@ class PostController extends \BaseController{
 	 */
 	public function destroy($id)
 	{
-		$blog = Post::find($id);
-		if($blog){
-			$blog->delete();
-			$blog->comments()->delete();
+		$post = Post::find($id);
+		if($post){
+			if($post->user_id == Auth::id()){
+			$post->delete();
+			$post->comments()->delete();
 			return Response::json(['message' => 'Post Deleted Succesfully'], 200);
+			}
+			return Response::json(['message' => 'UnAuthorized User'], 403);
 		}
 		return Response::json(['message'=> 'Please Enter a Valid Id'],404);
 	}
