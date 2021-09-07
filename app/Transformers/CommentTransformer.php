@@ -32,7 +32,7 @@ class CommentTransformer extends TransformerAbstract
         $reply = $comments->reply;
         if($reply)
         {
-            return $this->item($reply, new CommentTransformer);
+            return $this->collection($reply, new CommentTransformer);
         }
     }
  

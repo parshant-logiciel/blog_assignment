@@ -23,7 +23,7 @@ class CommentController extends \BaseController {
 	public function index()
 	{
 		$limit = Input::get('limit') ?: 10;
-		$data = Comment::orderBy(Input::get('sort_by') ?: 'id', Input::get('sort_order') ?: 'desc')->paginate($limit);
+		$data = Comment::paginate($limit);
 		return Response::json($this->response->paginatedCollection($data, new CommentTransformer));
 	}
 
