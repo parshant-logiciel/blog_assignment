@@ -1,19 +1,38 @@
 <?php
 
+use App\Transformers\DepartmentTransformer;
+use App\Transformers\UserTransformer;
 use Illuminate\Support\Facades\Validator;
 use LucaDegasperi\OAuth2Server\Authorizer;
 use Illuminate\Support\Facades\Auth;
-use Blog\AuthenticationService;
-
-
+use Repositories\ProfileRepo;
+use services\ImageUploadService;
+use services\AuthenticationService;
+use Sorskod\Larasponse\Larasponse;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Response;
 
 class UserController extends \BaseController {
 	protected $authorizer;
 	protected $authService;
-	public function __construct(Authorizer $authorizer, AuthenticationService $authenticationService)
+	public function __construct(
+		Authorizer $authorizer,
+		AuthenticationService $authenticationService,
+		ImageUploadService $service,
+		ProfileRepo $repo,
+		Filesystem $filesystem,
+		Larasponse $response
+	)
 	{
 		$this->authorizer = $authorizer;
 		$this->authService = $authenticationService;
+		$this->service = $service;
+		$this->repo = $repo;
+		$this->fileSystem = $filesystem;
+		$this->response = $response;
+		if (Input::get('includes')) {
+			$this->response->parseIncludes(Input::get('includes'));
+		}
 	}
 
 	/**
@@ -23,8 +42,8 @@ class UserController extends \BaseController {
 	 */
 	public function index()
 	{
-		
-		//
+		$data = User::all();
+		return Response::json($this->response->collection($data,new UserTransformer));
 	}
 
 	/**
@@ -98,18 +117,35 @@ class UserController extends \BaseController {
 		}
 		return	Response::json(['message' => 'Please Enter a Valid Id'], 404);
 	}
-	
+
 	/**
 	 * Show the form for editing the specified resource.
 	 *
-	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function upload_profile()
 	{
-		//
+		$input = Input::all();
+		$validator = Validator::make($input, Profile::getRules());
+		if($validator->fails()) {
+			return Response::json($validator->errors(),412);
+		}
+		if(Input::hasFile('profile')){
+			$file = Input::file('profile');
+			$url = $this->service->image($file);
+			$message = [
+				"Message" => 'Profile Uploaded Succesfully',
+				"data" => $url
+			];
+			return Response::json($message,200);
+		}
 	}
 
+	public function profile(){
+		
+		$data = User::Where('id',Auth::id())->first();
+		return Response::json($this->response->item($data, new UserTransformer), 200);
+	}
 
 	/**
 	 * Update the specified resource in storage.
@@ -117,9 +153,16 @@ class UserController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
-	{
-		//
+	public function department(){
+		$user = User::where('id',Input::get('user_id'))->first();
+		$departmentId = Input::get('department_id');
+		$user->depart()->sync($departmentId);
+		return Response::json('inserted successfully',200);
+	}
+	public function departmentIndex(){
+		
+		$data = Department::all();
+		return Response::json($this->response->collection($data, new DepartmentTransformer));
 	}
 
 

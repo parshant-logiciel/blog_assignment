@@ -5,6 +5,7 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
+
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait;
@@ -44,5 +45,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		return $this->hasMany(Comment::class);
 	}
-
+	public function profile(){
+		return $this->hasOne(Profile::class);
+	}
+	public function depart()
+	{
+		return $this->belongsToMany(Department::class);
+	}
 }

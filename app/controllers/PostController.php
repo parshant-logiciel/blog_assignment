@@ -4,12 +4,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Response;
 use App\Transformers\PostTransformer;
 use Sorskod\Larasponse\Larasponse;
-
-
+use Traits\SortingTrait;
+use Post;
 
 class PostController extends \BaseController{
-
-
+	use SortingTrait;
 	protected $response;
 
 	public function __construct(Larasponse $response)
@@ -18,6 +17,7 @@ class PostController extends \BaseController{
 		if (Input::get('includes')) {
 			$this->response->parseIncludes(Input::get('includes'));
 		}
+		
 	}
 	
 	/**
@@ -27,27 +27,25 @@ class PostController extends \BaseController{
 	 */
 	public function index()
 	{
-		$postQuery = Post::query();
-		$sort_by = Input::get('sort_by') ? : 'posts.id';
-		$sort_order = Input::get('sort_order') ?: 'desc';
+		$postQuery = Post::all();
 		$limit = Input::get('limit')? : 10;
 		$user_id = Input::get('user_id');
 		$user_name = Input::get('username');
 		$title = Input::get('title');
-		
 		if($user_name){
 			$postQuery->leftJoin('users','posts.user_id','=','users.id')
 			->whereIn('name',$user_name);
 		}
+
 		if($title){
 			$postQuery->where('title','LIKE','%'.$title. '%');
 		}
+
 		if($user_id){
 			$postQuery->whereIn('user_id',$user_id);
 		}
-		$postQuery->orderBy($sort_by,$sort_order);
-		$postQuery->select('posts.*');
-		$posts = $postQuery->paginate($limit);
+		$ordered = $this->scopeOrder();
+		$posts = $ordered->paginate($limit);
 		return Response::json($this->response->paginatedCollection($posts, new PostTransformer),200);
 	}
 

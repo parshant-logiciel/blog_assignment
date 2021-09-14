@@ -1,5 +1,5 @@
 <?php
-namespace Blog;
+namespace services;
 
 use Carbon\Carbon;
 use DB;

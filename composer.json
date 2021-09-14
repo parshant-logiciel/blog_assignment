@@ -19,12 +19,10 @@
 			"app/database/seeds",
 			"app/tests/TestCase.php",
 			"app/Transformers",
-			"app/services"
-		],
-		"psr-4": {
-			"App\\Transformers\\" : "App/Transformers",
-			"App\\Blog\\" : "App/services"
-		}
+			"app/services",
+			"app/Repositories",
+			"app/Traits"
+		]
 	},
 	"scripts": {
 		"post-install-cmd": [

@@ -5,6 +5,7 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
+
 class Post extends Eloquent implements UserInterface, RemindableInterface
 {
   use UserTrait, RemindableTrait;
@@ -34,17 +35,7 @@ class Post extends Eloquent implements UserInterface, RemindableInterface
   {
     return $this->belongsTo(User::class,'user_id','id');
   }
-  /**
-   * The "booted" method of the model.
-   *
-   * @return void
-   */
-  protected static function booted()
-  {
-    static::creating(function ($posts) {
-      $posts->user_id = Auth::id();
-    });
-  }
+ 
 }
 
 

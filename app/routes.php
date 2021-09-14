@@ -12,10 +12,11 @@
 |
 */
 
-// Route::get('/', function()
-// {
-// 	echo "hlpo";
-// });
+Route::get('/', function()
+{
+    echo "welcome to blog assignment..";
+    exit;
+});
 
 
 //Posts Data Mainupaltion Routes
@@ -30,18 +31,25 @@ Route::group(['before' => 'oauth'], function () {
 
 
 //Comments Routes
-Route::get('/comments', 'CommentController@index');
-Route::post('/comment/store', 'CommentController@store');
-Route::delete('/comment/delete/{id}', 'CommentController@destroy');
-Route::put('/comment/update/{id}', 'CommentController@update');
-Route::post('/comment/reply','CommentController@reply');
-
+Route::group(['before' => 'oauth'],function () {
+    Route::get('/comments', 'CommentController@index');
+    Route::post('/comment/store', 'CommentController@store');
+    Route::delete('/comment/delete/{id}', 'CommentController@destroy');
+    Route::put('/comment/update/{id}', 'CommentController@update');
+    Route::post('/comment/reply','CommentController@reply');
+});
 
 
 //User Routes
 Route::post('/user/store','UserController@signup');
 Route::post('/user/login','UserController@login');
-Route::post('/user/active','UserController@active');
-Route::get('/user/logout','UserController@logout');
-
+Route::get('/user/index','UserController@index');
+Route::group(['before' => 'oauth'],function () {
+    Route::post('/user/active','UserController@active');
+    Route::get('/user/logout','UserController@logout');
+    Route::post('/user/uploadProfile', 'UserController@upload_profile');
+    Route::get('/user/profile', 'UserController@profile');
+    Route::post('/user/department', 'UserController@department');
+    Route::get('/department/user','UserController@departmentIndex');
+});
 
