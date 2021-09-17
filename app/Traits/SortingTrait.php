@@ -1,14 +1,13 @@
 <?php
+
 namespace Traits;
-use Post;
 
-trait SortingTrait{
-
-    public static function scopeOrder()
+trait SortingTrait
+{
+    public static function scopeOrder($query) 
     {
-        $sortBy = \Input::get('sort_by') ? : 'id';
-        $sortOrder = \Input::get('sort_order') ? : 'desc';
-        return Post::orderBy($sortBy, $sortOrder);
-        
+        $sortBy = \Input::get('sort_by') ?: 'posts.id';
+        $sortOrder = \Input::get('sort_order') ?: 'desc';
+        return $query->orderBy($sortBy, $sortOrder);
     }
 }

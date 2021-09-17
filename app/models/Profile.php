@@ -15,21 +15,20 @@ class Profile extends Eloquent implements UserInterface, RemindableInterface
 
     protected $fillable = ['photo'];
 
-    public function user()
+    public function user() 
     {
         return $this->belongsTo(User::class);
     }
-    protected static function getRules($id = null)
+    protected static function getRules() 
     {
         $Rules = [
-            'profile' =>'required|mimes:jpg,bmp,png,'
-            
+            'profile' => 'required|mimes:jpg,bmp,png,'
         ];
         return $Rules;
     }
-    public static function scopeFindOrCreate($id)
+    public static function scopeFindOrCreate($id) 
     {
         $obj = static::find($id);
-        return $obj ? : new static;
+        return $obj ?: new static;
     }
 }

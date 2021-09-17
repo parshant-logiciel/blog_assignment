@@ -1,14 +1,12 @@
 <?php
+
 namespace App\Transformers;
 
 use League\Fractal\TransformerAbstract;
 
 class PostTransformer extends TransformerAbstract
 {
-  protected $availableIncludes = [
-    'comments',
-    'user',
-    ];
+  protected $availableIncludes = ['comments', 'user', 'favoriteBy'];
   public function transform($posts)
   { 
     return [
@@ -20,18 +18,30 @@ class PostTransformer extends TransformerAbstract
       'updated_at' => $posts->updated_at->format('Y-m-d') . " at " . $posts->updated_at->format('h:m:s')
     ];
   }
-  public function includeComments($posts)
+  public function includeComments($posts) 
   {
-     $comments =  $posts->comments;
-     if($comments){
-       return $this->collection($comments, new CommentTransformer);
-     }
+    $comments =  $posts->comments;
+    if($comments) {
+      return $this->collection($comments, new CommentTransformer);
+    }
   }
-  public function includeUser($posts){
+  public function includeUser($posts)
+  {
     $user = $posts->user;
-    if($user)
-    {
+    if($user) {
       return $this->item($user, new UserTransformer);
+    }
+  }
+  public function includeFavoriteBy($posts)
+  {
+    $favorite_By = $posts->favoriteByUser;
+    if($favorite_By) {
+      return $this->item($favorite_By, function ($favorite_By) {
+        return [
+          'User ID' => $favorite_By->id,
+          'Favorited-by' => $favorite_By->name,
+        ];
+      });
     }
   }
 }

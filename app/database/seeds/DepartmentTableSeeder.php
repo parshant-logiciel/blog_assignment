@@ -1,12 +1,11 @@
 <?php
 
-class DepartmentTableSeeder extends Seeder {
-
-public function run()
+class DepartmentTableSeeder extends Seeder 
 {
- Department::truncate();
-
-$departments = ([
+    public function run()
+    {
+        Department::truncate();
+        $departments = ([
             'General Management', 
             'business strategies',
             'Marketing Department',
@@ -15,13 +14,12 @@ $departments = ([
             'Sales Department',
             'Human Resource Department',
             'Purchase Department'
-            ]);
+        ]);
 
-            foreach($departments as $key => $value)
-            {
-                Department::create([
-                    'name' => $value
-                ]);
-            }
-}
+        foreach ($departments as $key => $value) {
+            Department::create([
+                'name' => $value
+            ]);
+        }
+    }
 }

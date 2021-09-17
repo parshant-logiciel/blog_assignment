@@ -12,8 +12,7 @@
 |
 */
 
-Route::get('/', function()
-{
+Route::get('/', function () {
     echo "welcome to blog assignment..";
     exit;
 });
@@ -23,33 +22,32 @@ Route::get('/', function()
 Route::group(['before' => 'oauth'], function () {
     Route::get('/posts', 'PostController@index');
     Route::Post('post/store', 'PostController@store');
-    Route::get('post/posts/{id}', 'PostController@show');
-    Route::put('post/update/{id}', 'PostController@update');
-    Route::delete('post/delete/{id}', 'PostController@destroy');
-
+    Route::get('post/{id}', 'PostController@show');
+    Route::put('post/{id}', 'PostController@update');
+    Route::delete('post/{id}', 'PostController@destroy');
+    //to add a Favorite Post
+    Route::Put('post/addFavorite', 'PostController@addFavorite');
 });
 
-
 //Comments Routes
-Route::group(['before' => 'oauth'],function () {
+Route::group(['before' => 'oauth'], function () {
     Route::get('/comments', 'CommentController@index');
     Route::post('/comment/store', 'CommentController@store');
-    Route::delete('/comment/delete/{id}', 'CommentController@destroy');
-    Route::put('/comment/update/{id}', 'CommentController@update');
-    Route::post('/comment/reply','CommentController@reply');
+    Route::put('/comment/{id}', 'CommentController@update');
+    Route::delete('/comment/{id}', 'CommentController@destroy');
+    Route::post('/comment/reply', 'CommentController@reply');
 });
 
 
 //User Routes
-Route::post('/user/store','UserController@signup');
-Route::post('/user/login','UserController@login');
-Route::get('/user/index','UserController@index');
-Route::group(['before' => 'oauth'],function () {
-    Route::post('/user/active','UserController@active');
-    Route::get('/user/logout','UserController@logout');
+Route::post('/user/store', 'UserController@signup');
+Route::post('/user/login', 'UserController@login');
+Route::get('/user/index', 'UserController@index');
+Route::group(['before' => 'oauth'], function () {
+    Route::post('/user/active', 'UserController@active');
     Route::post('/user/uploadProfile', 'UserController@upload_profile');
     Route::get('/user/profile', 'UserController@profile');
+    Route::get('/user/logout', 'UserController@logout');
     Route::post('/user/department', 'UserController@department');
-    Route::get('/department/user','UserController@departmentIndex');
+    Route::get('/department/user', 'UserController@departmentIndex');
 });
-

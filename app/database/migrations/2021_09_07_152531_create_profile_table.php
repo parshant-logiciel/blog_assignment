@@ -4,7 +4,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserProfileTable extends Migration {
+class CreateProfileTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -28,7 +28,7 @@ class CreateUserProfileTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('profile');
+		Schema::dropIfExists('userProfile');
 	}
 
 }

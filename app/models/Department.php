@@ -19,5 +19,4 @@ class Department extends Eloquent implements UserInterface, RemindableInterface
     {
         return $this->belongsToMany(User::class);
     }
-    
 }

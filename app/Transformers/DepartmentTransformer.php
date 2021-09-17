@@ -5,12 +5,9 @@ use League\Fractal\TransformerAbstract;
 
 class DepartmentTransformer extends TransformerAbstract
 {
-    protected $availableIncludes =[
-        'user'
-    ];
-    public function transform($department)
-    {
-
+    protected $availableIncludes = ['user'];
+    
+    public function transform($department) {
         return [
             'id'      => $department->id,
             'Department Name'  => $department->name,
@@ -20,10 +17,8 @@ class DepartmentTransformer extends TransformerAbstract
     }
     public function includeUser($department){
         $data = $department->users;
-        if($data)
-        {
+        if($data) {
             return $this->collection($data, new UserTransformer);
         }
-
     }
 }

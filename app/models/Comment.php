@@ -11,27 +11,25 @@ class Comment extends Eloquent implements UserInterface, RemindableInterface
 
   public $table = 'comments';
 
-  public $primaryKey = 'id';
-
   public $timestamps = true;
 
-  protected $fillable = ['comments', 'user_id','parent_id'];
+  protected $fillable = ['comments', 'user_id', 'parent_id'];
 
-  public function post(){
+  public function post()
+  {
     return $this->belongsTo(Post::class);
   }
   public function user()
   {
     return $this->belongsTo(User::class);
   }
-  
-  public function parent(){
-    return $this->belongsTo(Comment::class,'parent_id','id');
+
+  public function parent()
+  {
+    return $this->belongsTo(Comment::class, 'parent_id', 'id');
   }
   public function reply()
   {
     return $this->hasMany(Comment::class, 'parent_id', 'id');
   }
-  
-
 }

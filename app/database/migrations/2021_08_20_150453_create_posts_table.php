@@ -16,6 +16,8 @@ class CreatePostsTable extends Migration {
 			$table->increments('id');
 			$table->unsignedBigInteger('user_id')->length(11);
 			$table->string('title')->unique();
+			$table->boolean('is_favorite')->default(NULL);
+			$table->boolean('marked_by')->default(NULL);
 			$table->string('description', 200);
 			$table->timestamps();
 		});

@@ -1,15 +1,16 @@
 <?php
+
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Response;
 use App\Transformers\CommentTransformer;
 use Sorskod\Larasponse\Larasponse;
-class CommentController extends \BaseController {
 
+class CommentController extends \BaseController 
+{
 	protected $response;
-
 	public function __construct(Larasponse $response)
 	{
-		$this->beforeFilter('oauth');
+		// $this->beforeFilter('oauth');
 		$this->response = $response;
 		if (Input::get('includes')) {
 			$this->response->parseIncludes(Input::get('includes'));
@@ -27,8 +28,6 @@ class CommentController extends \BaseController {
 		return Response::json($this->response->paginatedCollection($data, new CommentTransformer));
 	}
 
-	
-
 	/**
 	 * Store a newly created resource in storage.
 	 *
@@ -36,7 +35,7 @@ class CommentController extends \BaseController {
 	 */
 	public function store()
 	{
-		try{
+		try {
 			$post = Post::findOrFail(Input::get('post_id'));
 			$input = Input::all();
 			$validator = Validator::make($input, ['post_id' => 'integer', 'comment' => 'min:3|max:200']);
@@ -48,16 +47,12 @@ class CommentController extends \BaseController {
 			$comment->user_id = Auth::id();
 			$comment->post_id = Input::get('post_id');
 			if(Input::get('parent_id')) {
-
 				$current = Comment::where('id', '=', Input::get('parent_id'))->first();
-
 				if($current && ($first = $current->parent) && ($first->parent) ) {
 					return Response::json(['message' => 'Restriction Reached'], 412);
 				}
-
 				$comment->parent_id = Input::get('parent_id');
 			}
-
 			$comment->save();
 			$transformed = $this->response->item($comment, new CommentTransformer);
 			$message = [
@@ -65,35 +60,10 @@ class CommentController extends \BaseController {
 				"data" => $transformed
 			];
 			return Response::json($message, 200);
-		} catch(Exception $e){
+		} catch (Exception $e) {
 			return Response::json(['message' => 'Post Not Found'], 404);
 		}
 	}
-
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
 
 	/**
 	 * Update the specified resource in storage.
@@ -129,6 +99,4 @@ class CommentController extends \BaseController {
 		}
 		return Response::json(['message' => 'Please Enter a Valid Id'], 404);
 	}
-
-
 }
